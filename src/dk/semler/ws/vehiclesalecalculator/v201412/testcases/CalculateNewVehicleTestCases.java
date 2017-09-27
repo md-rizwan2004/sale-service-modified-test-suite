@@ -20,6 +20,7 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -182,6 +183,8 @@ public class CalculateNewVehicleTestCases {
 		Unmarshaller unmarshal = jaxbContextOutput.createUnmarshaller();
 		responseMessage = (dk.semler.ws.vehiclesalecalculator.v201412.calculatenewvehicle.response.MESSAGE) 
 				unmarshal.unmarshal(new StringReader(vehicleSaleCalculatorService.executeService(vehiclePriceRequest).getOutputMessage()));
+		if(responseMessage.getRESPONSE().getCALCULATION() == null)
+			Assert.fail(responseMessage.getRESPONSE().getERROR().getDESCRIPTION());
 	}
 	
 	//=====================================================
