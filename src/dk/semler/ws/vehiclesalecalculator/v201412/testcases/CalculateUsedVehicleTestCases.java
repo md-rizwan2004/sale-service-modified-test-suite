@@ -117,7 +117,7 @@ public class CalculateUsedVehicleTestCases {
 		}
 
 		ExecuteServiceRequest vehiclePriceRequest = new ExecuteServiceRequest();
-		vehiclePriceRequest.setConsumerId("TESTCONSUMER+");			
+		vehiclePriceRequest.setConsumerId("TESTCONSUMER ");			
 		vehiclePriceRequest.setInputMessage(requestMessageXML.toString());
 
 		Unmarshaller unmarshal = jaxbContextOutput.createUnmarshaller();
