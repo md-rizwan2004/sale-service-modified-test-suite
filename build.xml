@@ -1,0 +1,13 @@
+<project name="testproject" basedir="." default="test">
+	<target name="test">
+		<junit printsummary="yes" haltonfailure="yes">
+			<classpath>
+			      <pathelement location="bin"/>
+			</classpath>
+			<formatter type="plain" usefile="false" />
+			<test name="dk.semler.ws.vehiclesalecalculator.v201412.testsuite.VehicleSaleCalculatorSuite" outfile="report">
+				<formatter type="xml" />
+			</test>
+		</junit>
+	</target>
+</project>
