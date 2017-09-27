@@ -26,7 +26,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import dk.semler.ws.infrastructure.service.util.ServiceEnvironment;
 import dk.semler.ws.vehiclesalecalculator.v201412.calculateusedvehicle.request.ECONOMYType;
 import dk.semler.ws.vehiclesalecalculator.v201412.stubs.ExecuteServiceRequest;
 import dk.semler.ws.vehiclesalecalculator.v201412.stubs.XMLService;
@@ -118,7 +117,7 @@ public class CalculateUsedVehicleTestCases {
 		}
 
 		ExecuteServiceRequest vehiclePriceRequest = new ExecuteServiceRequest();
-		vehiclePriceRequest.setConsumerId("DEVCONSUMER  ");			
+		vehiclePriceRequest.setConsumerId("TESTCONSUMER+");			
 		vehiclePriceRequest.setInputMessage(requestMessageXML.toString());
 
 		Unmarshaller unmarshal = jaxbContextOutput.createUnmarshaller();

@@ -176,7 +176,7 @@ public class CalculateNewVehicleTestCases {
 		}
 
 		ExecuteServiceRequest vehiclePriceRequest = new ExecuteServiceRequest();
-		vehiclePriceRequest.setConsumerId("DEVCONSUMER  ");			
+		vehiclePriceRequest.setConsumerId("TESTCONSUMER+");			
 		vehiclePriceRequest.setInputMessage(requestMessageXML.toString());
 
 		Unmarshaller unmarshal = jaxbContextOutput.createUnmarshaller();
