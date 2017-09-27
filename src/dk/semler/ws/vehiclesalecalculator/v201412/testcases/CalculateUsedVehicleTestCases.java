@@ -19,9 +19,11 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.internal.runners.statements.Fail;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -123,6 +125,8 @@ public class CalculateUsedVehicleTestCases {
 		Unmarshaller unmarshal = jaxbContextOutput.createUnmarshaller();
 		responseMessage = (dk.semler.ws.vehiclesalecalculator.v201412.calculateusedvehicle.response.MESSAGE) 
 				unmarshal.unmarshal(new StringReader(vehicleSaleCalculatorService.executeService(vehiclePriceRequest).getOutputMessage()));
+		if(responseMessage.getRESPONSE().getCALCULATION() == null)
+			Assert.fail(responseMessage.getRESPONSE().getERROR().getDESCRIPTION());
 	}
 
 	@Test
