@@ -8,7 +8,7 @@ import dk.semler.ws.vehiclesalecalculator.v201412.testcases.CalculateNewVehicleT
 import dk.semler.ws.vehiclesalecalculator.v201412.testcases.CalculateUsedVehicleTestCases;
 
 //=====================================================
-//=    test suite to run both test classes			  =
+//=    test suite to run test classes	              =
 //=====================================================
 
 @RunWith(Suite.class)
