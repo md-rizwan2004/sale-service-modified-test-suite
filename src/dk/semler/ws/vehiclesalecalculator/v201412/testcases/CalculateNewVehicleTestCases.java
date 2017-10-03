@@ -52,6 +52,8 @@ public class CalculateNewVehicleTestCases {
 	private String expecteddealermargingexclequipmentexcltagsexclvat;
 	private String expectedtaxexclregulation;
 	
+	
+	
 	private dk.semler.ws.vehiclesalecalculator.v201412.calculatenewvehicle.request.MESSAGE requestMessage;	
 	private dk.semler.ws.vehiclesalecalculator.v201412.calculatenewvehicle.response.MESSAGE responseMessage;
 	
