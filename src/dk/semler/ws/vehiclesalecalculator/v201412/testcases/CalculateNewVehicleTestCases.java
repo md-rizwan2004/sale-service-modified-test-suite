@@ -20,7 +20,6 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -28,6 +27,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import dk.semler.ws.infrastructure.service.util.ServiceEnvironment;
 import dk.semler.ws.vehiclesalecalculator.v201412.calculatenewvehicle.request.CALCULATIONTYPEType;
 import dk.semler.ws.vehiclesalecalculator.v201412.calculatenewvehicle.request.ECONOMYType;
 import dk.semler.ws.vehiclesalecalculator.v201412.calculatenewvehicle.request.VEHICLEType;
@@ -47,11 +47,13 @@ public class CalculateNewVehicleTestCases {
 	private String inputpricecode;
 	private String inputcalculationtype;
 	private String inputtaxcode;
-	private String expectedsalespriceincltagsexclvat;
-	private String expectedsalespriceincltagsinclvat;
-	private String expecteddealermargingexclequipmentexcltagsexclvat;
+	private String expectedsalespriceincltaxexclvat;
+	private String expectedsalespriceincltaxinclvat;
+	private String expecteddealermargingexclequipmentincltaxexclvat;
 	private String expectedtaxexclregulation;
-	
+	private String expectedgrandtotalpriceexclvat;
+	private String expectedgrandtotalpricevat;
+	private String expectedgrandtotalpriceinclvat;
 	
 	
 	private dk.semler.ws.vehiclesalecalculator.v201412.calculatenewvehicle.request.MESSAGE requestMessage;	
@@ -65,10 +67,13 @@ public class CalculateNewVehicleTestCases {
 			String inputpricecode,                                  
 			String inputcalculationtype,                            
 			String inputtaxcode,                            
-			String expectedsalespriceincltagsexclvat,               
-			String expectedsalespriceincltagsinclvat,               
-			String expecteddealermargingexclequipmentexcltagsexclvat,
-			String expectedtaxexclregulation			
+			String expectedsalespriceincltaxexclvat,               
+			String expectedsalespriceincltaxinclvat,               
+			String expecteddealermargingexclequipmentincltaxexclvat,
+			String expectedtaxexclregulation	,
+			String expectedgrandtotalpriceexclvat,
+	        String expectedgrandtotalpricevat,
+	        String expectedgrandtotalpriceinclvat
 			){
 				this.inputmodelcode = inputmodelcode;
 				this.inputmodelyear = inputmodelyear;
@@ -76,10 +81,13 @@ public class CalculateNewVehicleTestCases {
 				this.inputpricecode = inputpricecode;                                  
 				this.inputcalculationtype = inputcalculationtype;                            
 				this.inputtaxcode = inputtaxcode;                                  
-				this.expectedsalespriceincltagsexclvat = expecteddealermargingexclequipmentexcltagsexclvat;               
-				this.expectedsalespriceincltagsinclvat = expectedsalespriceincltagsinclvat;               
-				this.expecteddealermargingexclequipmentexcltagsexclvat = expecteddealermargingexclequipmentexcltagsexclvat;
-				this.expectedtaxexclregulation = expectedtaxexclregulation;                       
+				this.expectedsalespriceincltaxexclvat = expectedsalespriceincltaxexclvat;               
+				this.expectedsalespriceincltaxinclvat = expectedsalespriceincltaxinclvat;               
+				this.expecteddealermargingexclequipmentincltaxexclvat = expecteddealermargingexclequipmentincltaxexclvat;
+				this.expectedtaxexclregulation = expectedtaxexclregulation;   
+				this.expectedgrandtotalpriceexclvat = expectedgrandtotalpriceexclvat;
+				this.expectedgrandtotalpricevat = expectedgrandtotalpricevat;
+				this.expectedgrandtotalpriceinclvat = expectedgrandtotalpriceinclvat;
 	}
 	
 	//=====================================================
@@ -111,9 +119,8 @@ public class CalculateNewVehicleTestCases {
 		Service service = Service.create(CalculateNewVehicleTestCases.class.getResource("/client/VehicleSaleCalculator.v201412.wsdl"), qname);
 		vehicleSaleCalculatorService = service.getPort(XMLService.class);
 		BindingProvider bp = (BindingProvider) vehicleSaleCalculatorService;
-		bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, "http://testesb.semlernet.dk/xs/201412/VehicleSaleCalculator");
-		
-		/*if (ServiceEnvironment.isProduction()) {
+			
+		if (ServiceEnvironment.isProduction()) {
 			bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, "http://prodesb.semlernet.dk/xs/201412/VehicleSaleCalculator");
 		} else if (ServiceEnvironment.isTest()) {
 			bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, "http://testesb.semlernet.dk/xs/201412/VehicleSaleCalculator");			
@@ -123,7 +130,7 @@ public class CalculateNewVehicleTestCases {
 			bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, "http://devesb.semlernet.dk/xs/201412/VehicleSaleCalculator");	
 		} else {
 			throw new Exception("Could not identify environment");
-		}*/
+		}
 
 		jaxbContextInput = JAXBContext.newInstance(dk.semler.ws.vehiclesalecalculator.v201412.calculatenewvehicle.request.MESSAGE.class);
 		jaxbContextOutput = JAXBContext.newInstance(dk.semler.ws.vehiclesalecalculator.v201412.calculatenewvehicle.response.MESSAGE.class);
@@ -146,7 +153,7 @@ public class CalculateNewVehicleTestCases {
 		VEHICLEType vehicleType = new VEHICLEType();
 		vehicleType.setMODELCODE(inputmodelcode);
 		vehicleType.setMODELYEAR(Integer.parseInt(inputmodelyear));			
-		vehicleType.setPRICECODE("J01");
+		vehicleType.setPRICECODE(inputpricecode);
 
 		String[] factoryEquipments = inputfactoryequipment.split(Pattern.quote("|"));
 		if(factoryEquipments.length > 0){
@@ -162,9 +169,10 @@ public class CalculateNewVehicleTestCases {
 		request.withECONOMY(economyType);
 
 		CALCULATIONTYPEType calculationType = new CALCULATIONTYPEType();
-		calculationType.setCALCULATIONTYPE("CAR_INCL_VAT_INCL_TAX");
+		calculationType.setCALCULATIONTYPE(inputcalculationtype);
 		calculationType.setEXCLUDEAUTOMATICSEARCHOFSTANDARDEQUIPMENT(true);
 		calculationType.setEXCLUDEAUTOMATICSEARCHOFPLUSPACKAGES(true);
+		calculationType.setTAXCODE(inputtaxcode);
 		request.withCALCULATIONTYPE(calculationType);
 
 		requestMessage = new dk.semler.ws.vehiclesalecalculator.v201412.calculatenewvehicle.request.MESSAGE();
@@ -179,24 +187,33 @@ public class CalculateNewVehicleTestCases {
 		}
 
 		ExecuteServiceRequest vehiclePriceRequest = new ExecuteServiceRequest();
-		vehiclePriceRequest.setConsumerId("TESTCONSUMER ");			
+		vehiclePriceRequest.setConsumerId("DEVCONSUMER  ");			
 		vehiclePriceRequest.setInputMessage(requestMessageXML.toString());
 
 		Unmarshaller unmarshal = jaxbContextOutput.createUnmarshaller();
 		responseMessage = (dk.semler.ws.vehiclesalecalculator.v201412.calculatenewvehicle.response.MESSAGE) 
 				unmarshal.unmarshal(new StringReader(vehicleSaleCalculatorService.executeService(vehiclePriceRequest).getOutputMessage()));
-		if(responseMessage.getRESPONSE().getCALCULATION() == null)
-			Assert.fail(responseMessage.getRESPONSE().getERROR().getDESCRIPTION());
 	}
 	
 	//=====================================================
 	//=    				series of tests    				  =
 	//=====================================================
-
 	@Test
-	public void VehicleTaxRegulationShouldMatch() {
-		assertEquals(new BigDecimal(expectedtaxexclregulation).setScale(2), 
+	public void PassatVanHybridInclTax() {
+		assertEquals("expectedtaxexclregulation",new BigDecimal(expectedtaxexclregulation).setScale(2), 
 				responseMessage.getRESPONSE().getCALCULATION().getTAXEXCLREGULATIONS().setScale(2));
+		assertEquals("",new BigDecimal(expectedsalespriceincltaxexclvat).setScale(2), 
+				responseMessage.getRESPONSE().getCALCULATION().getSALESPRICE().getINCLTAXEXCLVAT().setScale(2));
+		assertEquals(new BigDecimal(expectedsalespriceincltaxinclvat).setScale(2), 
+				responseMessage.getRESPONSE().getCALCULATION().getSALESPRICE().getINCLTAXINCLVAT().setScale(2));
+		assertEquals(new BigDecimal(expecteddealermargingexclequipmentincltaxexclvat).setScale(2), 
+				responseMessage.getRESPONSE().getCALCULATION().getDEALERMARGINEXCLEQUIPMENT().getEXCLTAXEXCLVAT().setScale(2));
+		assertEquals(new BigDecimal(expectedgrandtotalpriceexclvat).setScale(2), 
+				responseMessage.getRESPONSE().getCALCULATION().getGRANDTOTALPRICE().getINCLTAXEXCLVAT().setScale(2));
+		assertEquals(new BigDecimal(expectedgrandtotalpricevat).setScale(2), 
+				responseMessage.getRESPONSE().getCALCULATION().getGRANDTOTALPRICE().getVAT().setScale(2));
+		assertEquals("expectedgrandtotalpriceinclvat",new BigDecimal(expectedgrandtotalpriceinclvat).setScale(2), 
+				responseMessage.getRESPONSE().getCALCULATION().getGRANDTOTALPRICE().getINCLTAXINCLVAT().setScale(2));
 	}
 	
 	//=====================================================
